@@ -1,0 +1,8 @@
+*.swp
+*.swo
+*~
+.netrwhist
+.DS_Store
+Thumbs.db
+.luacheckcache
+.stylua-zip
