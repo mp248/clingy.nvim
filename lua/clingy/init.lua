@@ -1,8 +1,16 @@
 local M = {}
 
-M.enabled = false
-M.line_nr_color = "LineNr"
-M.cursor_line_nr_color = "CursorLineNr"
+local default_config = {
+  enabled = false,
+  line_nr_color = "LineNr",
+  cursor_line_nr_color = "CursorLineNr",
+}
+
+M.config = {}
+
+function M.setup(user_options)
+  M.config = vim.tbl_deep_extend("force", default_config, user_options or {})
+end
 
 local namespace_id = vim.api.nvim_create_namespace("clingy")
 
@@ -10,7 +18,7 @@ function M.clingy()
   local buffer = vim.api.nvim_get_current_buf()
   vim.api.nvim_buf_clear_namespace(buffer, namespace_id, 0, -1)
 
-  if not M.enabled then
+  if not M.config.enabled then
     return
   end
 
@@ -33,9 +41,8 @@ function M.clingy()
     if first_non_space then
       local column = first_non_space - 1
 
-      -- clingy number formatting and color
       local clingy_number = (i == cursor_line) and string.format("%3d ", i) or string.format("%3d ", math.abs(i - cursor_line))
-      local color = (cursor_line == i) and M.cursor_line_nr_color or M.line_nr_color
+      local color = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
 
       vim.api.nvim_buf_set_extmark(
         buffer,
@@ -53,8 +60,10 @@ function M.clingy()
 end
 
 function M.toggle()
-  M.enabled = not M.enabled
+  M.config.enabled = not M.config.enabled
   M.clingy()
 end
+
+M.setup()
 
 return M
