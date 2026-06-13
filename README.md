@@ -1,3 +1,7 @@
+# 😍 clingy.nvim
+
+Displays line numbers right up against your code's first non-whitespace character.
+
 ## Installation
 
 Using [lazy.nvim](https://github.com):
@@ -10,4 +14,4 @@ Using [lazy.nvim](https://github.com):
 
 ## Usage
 
-* Run `:Clingy` to toggle clingy numbers.
+Run `:Clingy` to toggle clingy numbers.
