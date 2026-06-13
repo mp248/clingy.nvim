@@ -2,6 +2,7 @@ local M = {}
 
 local default_config = {
   enabled = false,
+  relative_nr = true,
   line_nr_color = "LineNr",
   cursor_line_nr_color = "CursorLineNr",
 }
@@ -41,9 +42,11 @@ function M.clingy()
     if first_non_space then
       local column = first_non_space - 1
 
-      local clingy_number = (i == cursor_line) and string.format("%3d ", i) or string.format("%3d ", math.abs(i - cursor_line))
+      -- formatting and color
+      local clingy_number = (i == cursor_line) and string.format("%3d ", i) or M.config.relative_nr and string.format("%3d ", math.abs(i - cursor_line)) or string.format("%3d ", i)
       local color = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
 
+      -- create extmark
       vim.api.nvim_buf_set_extmark(
         buffer,
         namespace_id,
