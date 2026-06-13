@@ -43,7 +43,7 @@ function M.clingy()
       local column = first_non_space - 1
 
       -- formatting and color
-      local clingy_number = (i == cursor_line) and string.format("%3d ", i) or M.config.relative_nr and string.format("%3d ", math.abs(i - cursor_line)) or string.format("%3d ", i)
+      local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format("%3d ", i) or string.format("%3d ", math.abs(i - cursor_line))
       local color = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
 
       -- create extmark
