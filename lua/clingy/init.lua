@@ -13,6 +13,16 @@ function M.setup(user_options)
   M.config = vim.tbl_deep_extend("force", default_config, user_options or {})
 end
 
+local function resolve_color(color_input)
+  if color_input:sub(1, 1) == "#" then
+    local new_color = "ClingyHex" .. color_input:gsub("#", "")
+    vim.api.nvim_set_hl(0, new_color, { fg = color_input })
+    return new_color
+  end
+
+  return color_input
+end
+
 local namespace_id = vim.api.nvim_create_namespace("clingy")
 
 function M.clingy()
@@ -44,7 +54,8 @@ function M.clingy()
 
       -- formatting and color
       local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format("%3d ", i) or string.format("%3d ", math.abs(i - cursor_line))
-      local color = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
+      local color_input = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
+      local resolved_color = resolve_color(color_input)
 
       -- create extmark
       vim.api.nvim_buf_set_extmark(
@@ -53,7 +64,7 @@ function M.clingy()
         i - 1,
         column,
         {
-          virt_text = { { clingy_number, color } },
+          virt_text = { { clingy_number, resolved_color } },
           virt_text_pos = "inline",
         }
       )
