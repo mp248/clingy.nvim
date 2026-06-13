@@ -1,6 +1,8 @@
 local M = {}
 
 M.enabled = false
+M.line_nr_color = "LineNr"
+M.cursor_line_nr_color = "CursorLineNr"
 
 local namespace_id = vim.api.nvim_create_namespace("clingy")
 
@@ -31,8 +33,9 @@ function M.clingy()
     if first_non_space then
       local column = first_non_space - 1
 
-      local clingy_number = string.format("%3d ", math.abs(i - cursor_line))
-      clingy_number = clingy_number .. " "
+      -- clingy number formatting and color
+      local clingy_number = (i == cursor_line) and string.format("%3d ", i) or string.format("%3d ", math.abs(i - cursor_line))
+      local color = (cursor_line == i) and M.cursor_line_nr_color or M.line_nr_color
 
       vim.api.nvim_buf_set_extmark(
         buffer,
@@ -40,7 +43,7 @@ function M.clingy()
         i - 1,
         column,
         {
-          virt_text = { { clingy_number, "ErrorMsg" } },
+          virt_text = { { clingy_number, color } },
           virt_text_pos = "inline",
         }
       )
