@@ -3,6 +3,7 @@ local M = {}
 local default_config = {
   enabled = false,
   relative_nr = true,
+  padding = 3,
   line_nr_color = "LineNr",
   cursor_line_nr_color = "CursorLineNr",
 }
@@ -53,7 +54,9 @@ function M.clingy()
       local column = first_non_space - 1
 
       -- formatting and color
-      local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format("%3d ", i) or string.format("%3d ", math.abs(i - cursor_line))
+      local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format("%3d", i) or string.format("%3d", math.abs(i - cursor_line))
+      clingy_number = clingy_number .. string.rep(" ", M.config.padding)
+
       local color_input = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
       local resolved_color = resolve_color(color_input)
 
