@@ -2,6 +2,8 @@
 
 Displays indented line numbers.
 
+<img width="938" height="747" alt="Screenshot 2026-06-15 at 12 09 48 AM" src="https://github.com/user-attachments/assets/786f82c7-54b4-4466-9316-eca082d1a504" />
+
 ## 📦 Installation
 
 Install the plugin using [lazy.nvim](https://github.com/folke/lazy.nvim):
