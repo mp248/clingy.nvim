@@ -3,7 +3,7 @@ local M = {}
 local default_config = {
   enabled = false,
   relative_nr = true,
-  padding = 3,
+  padding = 2,
   line_nr_color = "LineNr",
   cursor_line_nr_color = "CursorLineNr",
 }
