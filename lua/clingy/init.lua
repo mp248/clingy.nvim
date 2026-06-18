@@ -34,11 +34,18 @@ function M.clingy()
     return
   end
 
+  -- line number at cursor
   local cursor = vim.api.nvim_win_get_cursor(0)
   local cursor_line = cursor[1]
+
+  -- range of line numbers currently visible
   local win_info = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1]
   local top_line = win_info.topline
   local bottom_line = win_info.botline
+
+  -- create format specifier
+  local max_line_nr_width = #tostring(bottom_line)
+  local format_specifier = "%" .. (max_line_nr_width > 3 and max_line_nr_width or 3) .. "d"
 
   for i = top_line, bottom_line do
     local line_content = vim.api.nvim_buf_get_lines(
@@ -54,7 +61,7 @@ function M.clingy()
       local column = first_non_space - 1
 
       -- formatting and color
-      local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format("%3d", i) or string.format("%3d", math.abs(i - cursor_line))
+      local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i) or string.format(format_specifier, math.abs(i - cursor_line))
       clingy_number = clingy_number .. string.rep(" ", M.config.padding)
 
       local color_input = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
