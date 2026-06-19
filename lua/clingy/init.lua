@@ -38,14 +38,18 @@ function M.clingy()
   local cursor = vim.api.nvim_win_get_cursor(0)
   local cursor_line = cursor[1]
 
-  -- range of line numbers currently visible
+  -- range of line numbers currently in view
   local win_info = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1]
   local top_line = win_info.topline
   local bottom_line = win_info.botline
 
+  -- the leftmost column currently in view
+  local leftmost_column = vim.fn.winsaveview().leftcol
+
   -- create format specifier
-  local max_line_nr_width = #tostring(bottom_line)
-  local format_specifier = "%" .. (max_line_nr_width > 3 and max_line_nr_width or 3) .. "d"
+  local bottom_line_nr_width = #tostring(bottom_line)
+  local max_line_nr_width = bottom_line_nr_width > 3 and bottom_line_nr_width or 3
+  local format_specifier = "%" .. max_line_nr_width .. "d"
 
   for i = top_line, bottom_line do
     local line_content = vim.api.nvim_buf_get_lines(
@@ -58,27 +62,38 @@ function M.clingy()
     local first_non_space = line_content[1] and line_content[1]:find("%S")
 
     if first_non_space then
-      local column = first_non_space - 1
+      local clingy_column = first_non_space - 1
 
       -- formatting and color
       local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i) or string.format(format_specifier, math.abs(i - cursor_line))
       clingy_number = clingy_number .. string.rep(" ", M.config.padding)
 
-      local color_input = (cursor_line == i) and M.config.cursor_line_nr_color or M.config.line_nr_color
+      local color_input = cursor_line == i and M.config.cursor_line_nr_color or M.config.line_nr_color
       local resolved_color = resolve_color(color_input)
 
-      -- create extmark
+      -- indent line
       vim.api.nvim_buf_set_extmark(
         buffer,
         namespace_id,
         i - 1,
-        column,
+        clingy_column,
         {
-          virt_text = { { clingy_number, resolved_color } },
+          virt_text = { { string.rep(" ", max_line_nr_width + M.config.padding) } },
           virt_text_pos = "inline",
         }
       )
 
+      -- draw clingy number
+      vim.api.nvim_buf_set_extmark(
+        buffer,
+        namespace_id,
+        i - 1,
+        0,
+        {
+          virt_text = { { clingy_number, resolved_color } },
+          virt_text_win_col = leftmost_column > clingy_column and 0 or clingy_column - leftmost_column,
+        }
+      )
     end
   end
 end
