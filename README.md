@@ -1,8 +1,8 @@
 # clingy.nvim
 
 Clingy line numbers indent with your text.
-   
-<img width="1006" height="822" alt="Screenshot 2026-06-15 at 7 26 36 PM" src="https://github.com/user-attachments/assets/82027f24-aa6c-4a7e-b99d-dc6882bd4a52" />
+
+https://github.com/user-attachments/assets/d04080da-7fe1-4dde-bd3b-ee20481b6fde
 
 ## Installation
 
