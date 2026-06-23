@@ -30,15 +30,16 @@ function M.clingy()
   local buffer = vim.api.nvim_get_current_buf()
   vim.api.nvim_buf_clear_namespace(buffer, namespace_id, 0, -1)
 
+  -- check if clingy numbers are enabled
   if not M.config.enabled then
     return
   end
 
-  -- line number at cursor
+  -- get line number at cursor
   local cursor = vim.api.nvim_win_get_cursor(0)
   local cursor_line = cursor[1]
 
-  -- range of line numbers currently in view
+  -- get range of line numbers currently in view
   local win_info = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1]
   local top_line = win_info.topline
   local bottom_line = win_info.botline
@@ -51,27 +52,25 @@ function M.clingy()
   local max_line_nr_width = bottom_line_nr_width > 3 and bottom_line_nr_width or 3
   local format_specifier = "%" .. max_line_nr_width .. "d"
 
-  for i = top_line, bottom_line do
-    local line_content = vim.api.nvim_buf_get_lines(
-      buffer,
-      i - 1,
-      i,
-      false
-    )
+  -- get all lines in buffer
+  local lines = vim.api.nvim_buf_get_lines(buffer, 0, -1, false)
 
-    local first_non_space = line_content[1] and line_content[1]:find("%S")
+  for i = top_line, bottom_line do
+    local line = lines[i]
+    local first_non_space = line and line:find("%S")
 
     if first_non_space then
       local clingy_column = first_non_space - 1
 
-      -- formatting and color
+      -- formatting
       local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i) or string.format(format_specifier, math.abs(i - cursor_line))
       clingy_number = clingy_number .. " "
 
+      -- color
       local color_input = cursor_line == i and M.config.cursor_line_nr_color or M.config.line_nr_color
       local resolved_color = resolve_color(color_input)
 
-      -- indent line
+      -- indent line with a blank inline extmark
       vim.api.nvim_buf_set_extmark(
         buffer,
         namespace_id,
@@ -83,7 +82,7 @@ function M.clingy()
         }
       )
 
-      -- draw clingy number
+      -- draw clingy number with overlay extmark
       vim.api.nvim_buf_set_extmark(
         buffer,
         namespace_id,
