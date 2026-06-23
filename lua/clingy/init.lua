@@ -3,7 +3,7 @@ local M = {}
 local default_config = {
   enabled = false,
   relative_nr = true,
-  padding = 1,
+  threshold = 0,
   line_nr_color = "LineNr",
   cursor_line_nr_color = "CursorLineNr",
 }
@@ -66,7 +66,7 @@ function M.clingy()
 
       -- formatting and color
       local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i) or string.format(format_specifier, math.abs(i - cursor_line))
-      clingy_number = clingy_number .. string.rep(" ", M.config.padding)
+      clingy_number = clingy_number .. " "
 
       local color_input = cursor_line == i and M.config.cursor_line_nr_color or M.config.line_nr_color
       local resolved_color = resolve_color(color_input)
@@ -78,7 +78,7 @@ function M.clingy()
         i - 1,
         clingy_column,
         {
-          virt_text = { { string.rep(" ", max_line_nr_width + M.config.padding) } },
+          virt_text = { { string.rep(" ", max_line_nr_width + 1) } },
           virt_text_pos = "inline",
         }
       )
@@ -91,7 +91,7 @@ function M.clingy()
         0,
         {
           virt_text = { { clingy_number, resolved_color } },
-          virt_text_win_col = leftmost_column > clingy_column and 0 or clingy_column - leftmost_column,
+          virt_text_win_col = math.max(clingy_column - leftmost_column - M.config.threshold, 0),
         }
       )
     end
