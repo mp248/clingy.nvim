@@ -23,7 +23,7 @@ Clingy number behavior can be customized. The default values are:
 {
     enabled = false, -- Toggle activation on Neovim launch.
     relative_nr = true,  -- Enable relative line numbers.
-    padding = 1, -- Number of spaces between clingy numbers and your text.
+    threshold = 0, -- The minimum distance between a clingy number and the first non-whitespace character of its line
     line_nr_color = "LineNr", -- Color of standard clingy numbers (supports highlight groups or raw hex codes).
     cursor_line_nr_color = "CursorLineNr", -- Color of the clingy number at your cursor (supports highlight groups or raw hex codes).
 }
