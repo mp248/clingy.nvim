@@ -1,5 +1,6 @@
 local M = {}
 
+-- default configuration values
 local default_config = {
   enabled = false,
   relative_nr = true,
@@ -10,10 +11,12 @@ local default_config = {
 
 M.config = {}
 
+-- replaces defaults with user-provided options
 function M.setup(user_options)
   M.config = vim.tbl_deep_extend("force", default_config, user_options or {})
 end
 
+-- creates a highlight group using raw hex string
 local function resolve_color(color_input)
   if color_input:sub(1, 1) == "#" then
     local new_color = "ClingyHex" .. color_input:gsub("#", "")
@@ -26,6 +29,7 @@ end
 
 local namespace_id = vim.api.nvim_create_namespace("clingy")
 
+-- draws clingy numbers on screen using virtual text
 function M.clingy()
   local buffer = vim.api.nvim_get_current_buf()
   vim.api.nvim_buf_clear_namespace(buffer, namespace_id, 0, -1)
@@ -60,6 +64,7 @@ function M.clingy()
     local first_non_space = line and line:find("%S")
 
     if first_non_space then
+      -- column where clingy number will be drawn
       local clingy_column = first_non_space - 1
 
       -- formatting
@@ -97,6 +102,7 @@ function M.clingy()
   end
 end
 
+-- toggles clingy numbers
 function M.toggle()
   M.config.enabled = not M.config.enabled
   M.clingy()
