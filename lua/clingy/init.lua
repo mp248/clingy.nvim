@@ -4,6 +4,7 @@ local M = {}
 local default_config = {
   enabled = false,
   relative_nr = true,
+  skip_empty_lines = false,
   threshold = 0,
   line_nr_color = "LineNr",
   cursor_line_nr_color = "CursorLineNr",
@@ -59,21 +60,23 @@ function M.clingy()
   -- get all lines in buffer
   local lines = vim.api.nvim_buf_get_lines(buffer, 0, -1, false)
 
+  local last_col = 0
+
   for i = top_line, bottom_line do
+    -- formatting
+    local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i) or string.format(format_specifier, math.abs(i - cursor_line))
+    clingy_number = clingy_number .. " "
+
+    -- color
+    local color_input = cursor_line == i and M.config.cursor_line_nr_color or M.config.line_nr_color
+    local resolved_color = resolve_color(color_input)
+
     local line = lines[i]
     local first_non_space = line and line:find("%S")
 
     if first_non_space then
       -- column where clingy number will be drawn
       local clingy_column = first_non_space - 1
-
-      -- formatting
-      local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i) or string.format(format_specifier, math.abs(i - cursor_line))
-      clingy_number = clingy_number .. " "
-
-      -- color
-      local color_input = cursor_line == i and M.config.cursor_line_nr_color or M.config.line_nr_color
-      local resolved_color = resolve_color(color_input)
 
       -- indent line with a blank inline extmark
       vim.api.nvim_buf_set_extmark(
@@ -96,6 +99,20 @@ function M.clingy()
         {
           virt_text = { { clingy_number, resolved_color } },
           virt_text_win_col = math.max(clingy_column - leftmost_column - M.config.threshold, 0),
+        }
+      )
+
+      last_col = clingy_column
+    elseif not M.config.skip_empty_lines then
+      -- draw clingy number with overlay extmark
+      vim.api.nvim_buf_set_extmark(
+        buffer,
+        namespace_id,
+        i - 1,
+        0,
+        {
+          virt_text = { { clingy_number, resolved_color } },
+          virt_text_win_col = math.max(last_col - leftmost_column - M.config.threshold, 0),
         }
       )
     end
