@@ -64,7 +64,8 @@ function M.clingy()
 
   for i = top_line, bottom_line do
     -- formatting
-    local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i) or string.format(format_specifier, math.abs(i - cursor_line))
+    local clingy_number = (i == cursor_line or not M.config.relative_nr) and string.format(format_specifier, i)
+      or string.format(format_specifier, math.abs(i - cursor_line))
     clingy_number = clingy_number .. " "
 
     -- color
@@ -79,42 +80,24 @@ function M.clingy()
       local clingy_column = first_non_space - 1
 
       -- indent line with a blank inline extmark
-      vim.api.nvim_buf_set_extmark(
-        buffer,
-        namespace_id,
-        i - 1,
-        clingy_column,
-        {
-          virt_text = { { string.rep(" ", max_line_nr_width + 1) } },
-          virt_text_pos = "inline",
-        }
-      )
+      vim.api.nvim_buf_set_extmark(buffer, namespace_id, i - 1, clingy_column, {
+        virt_text = { { string.rep(" ", max_line_nr_width + 1) } },
+        virt_text_pos = "inline",
+      })
 
       -- draw clingy number with overlay extmark
-      vim.api.nvim_buf_set_extmark(
-        buffer,
-        namespace_id,
-        i - 1,
-        0,
-        {
-          virt_text = { { clingy_number, resolved_color } },
-          virt_text_win_col = math.max(clingy_column - leftmost_column - M.config.threshold, 0),
-        }
-      )
+      vim.api.nvim_buf_set_extmark(buffer, namespace_id, i - 1, 0, {
+        virt_text = { { clingy_number, resolved_color } },
+        virt_text_win_col = math.max(clingy_column - leftmost_column - M.config.threshold, 0),
+      })
 
       last_col = clingy_column
     elseif not M.config.skip_empty_lines then
       -- draw clingy number with overlay extmark
-      vim.api.nvim_buf_set_extmark(
-        buffer,
-        namespace_id,
-        i - 1,
-        0,
-        {
-          virt_text = { { clingy_number, resolved_color } },
-          virt_text_win_col = math.max(last_col - leftmost_column - M.config.threshold, 0),
-        }
-      )
+      vim.api.nvim_buf_set_extmark(buffer, namespace_id, i - 1, 0, {
+        virt_text = { { clingy_number, resolved_color } },
+        virt_text_win_col = math.max(last_col - leftmost_column - M.config.threshold, 0),
+      })
     end
   end
 end
