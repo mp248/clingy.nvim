@@ -2,7 +2,7 @@
 
 Clingy line numbers indent with your text.
 
-https://github.com/user-attachments/assets/d04080da-7fe1-4dde-bd3b-ee20481b6fde
+<img width="620" height="542" alt="clingy_demo" src="https://github.com/user-attachments/assets/dc188065-83a0-439f-a9fe-a6cc296aa6a6" />
 
 ## Installation
 
